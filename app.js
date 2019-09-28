@@ -1,6 +1,10 @@
 const puppeteer = require("puppeteer");
 
 exports.fetch = async settings => {
+  if (!settings.username) {
+    throw Error("Username is missing");
+  }
+
   const browser = await puppeteer.launch({
     headless: true,
     args: [
@@ -48,57 +52,52 @@ exports.fetch = async settings => {
       { waitUntil: "networkidle2" }
     );
 
-    await page.on("requestfailed", request => ({
-      error: request.failure().errorText
-    }));
+    await page.on("requestfailed", request => {
+      throw Error(request.failure().errorText);
+    });
 
-    await page.on("onerror", err => ({
-      error: err
-    }));
+    await page.on("error", err => {
+      throw Error(err);
+    });
 
     if (fetchUrl.headers().status === "404") {
-      return { error: "Page not found" };
+      throw Error("Page not found");
     }
 
-    if (fetchUrl._url.contains("login")) {
-      return { error: "Redirected to login page" };
+    if (fetchUrl._url.includes("login")) {
+      throw Error("Redirected to login page");
     }
 
     const _sharedData = await page.evaluate("_sharedData");
     if (
       _sharedData.entry_data.ProfilePage[0].graphql.user.is_private === true
     ) {
-      return {
-        error: `The profile '${settings.username}' is private`
-      };
+      throw Error(`The profile '${settings.username}' is private`);
     }
 
-    try {
-      await page.waitFor(500);
+    await page.waitFor(500);
 
-      const imageList = await page.evaluate(() => {
-        const arr = [];
-        const wrap = document.getElementsByTagName("article");
-        const images = [...wrap[0].getElementsByTagName("img")];
-        images.forEach(img => {
-          if (img && img.naturalWidth >= 250)
-            arr.push({
-              src: img.src,
-              sizes: {
-                width: img.naturalWidth,
-                height: img.naturalHeight
-              }
-            });
-        });
-        return arr;
+    const imageList = await page.evaluate(() => {
+      const arr = [];
+      const wrap = document.getElementsByTagName("article");
+      const images = [...wrap[0].getElementsByTagName("img")];
+      images.forEach(img => {
+        if (img && img.naturalWidth >= 250)
+          arr.push({
+            src: img.src,
+            sizes: {
+              width: img.naturalWidth,
+              height: img.naturalHeight
+            }
+          });
       });
+      return arr;
+    });
 
-      return await imageList;
-    } catch (err) {
-      return { error: err };
-    }
+    return await imageList;
   } catch (err) {
-    return { error: err };
+    console.error(err);
+    // return { error: err };
   } finally {
     await browser.close();
   }

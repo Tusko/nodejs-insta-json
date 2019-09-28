@@ -13,14 +13,14 @@ const router = express.Router();
 app.use(express.static(path.join(__dirname, `/preview`)));
 app.engine("html", require("ejs").renderFile);
 
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
   eventHandler.processing(req, res);
-  res.end();
+  next();
 });
 
-router.get("/preview", (req, res) => {
+router.get("/preview", (req, res, next) => {
   res.render(path.join(__dirname, `/preview/render.html`));
-  res.end();
+  next();
 });
 
 app.use(bodyParser.json());
