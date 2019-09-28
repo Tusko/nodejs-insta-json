@@ -8,11 +8,11 @@ const app = express();
 app
   .use(express.static("test"))
   .set("port", process.env.PORT || 8182)
-  .get("/", (req, res, next) => {
+  .get("/", (req, res) => {
     eventHandler.processing(req, res);
   })
   .use(express.static("test"))
-  .get("/render", (req, res, next) => {
+  .get("/render", (req, res) => {
     res.sendFile(path.join(__dirname, `../test/render.html`));
   });
 
