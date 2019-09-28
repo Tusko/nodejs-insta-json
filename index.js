@@ -1,4 +1,5 @@
 const express = require("express");
+const serverless = require("serverless-http");
 const path = require("path");
 const eventHandler = require("./eventHandler");
 
@@ -23,3 +24,6 @@ app
     console.log(`Server is listening on http://localhost:${app.get("port")} `);
     return false;
   });
+
+module.exports = app;
+module.exports.handler = serverless(app);
