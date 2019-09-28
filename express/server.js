@@ -14,7 +14,7 @@ app
     res.sendFile(path.join(__dirname, `../test/render.html`));
   });
 
-// app.use("/.netlify/functions/server", router);
+app.use("/.netlify/functions/server", "/");
 
 module.exports = app;
 module.exports.handler = serverless(app);
