@@ -10,11 +10,12 @@ app
   .get("/", (req, res, next) => {
     eventHandler.processing(req, res);
   })
+  .use(express.static("test"))
   .get("/render", (req, res, next) => {
     res.sendFile(path.join(__dirname, `../test/render.html`));
   });
 
-app.use("/.netlify/functions/server", "/");
+// app.use("/.netlify/functions/server");
 
 module.exports = app;
 module.exports.handler = serverless(app);
