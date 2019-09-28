@@ -64,11 +64,15 @@ exports.fetch = async settings => {
       throw Error("Page not found");
     }
 
-    if (fetchUrl._url.includes("login")) {
-      throw Error("Redirected to login page");
-    }
+    // if (fetchUrl._url.includes("login")) {
+    //   throw Error("Redirected to login page");
+    // }
 
     const _sharedData = await page.evaluate("_sharedData");
+
+    if (!_sharedData) {
+      throw Error(`Loading error`);
+    }
     if (
       _sharedData.entry_data.ProfilePage[0].graphql.user.is_private === true
     ) {

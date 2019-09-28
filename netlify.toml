@@ -4,5 +4,6 @@
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server/:splat"
+  to = "/.netlify/functions/server/:splat username=:username"
   status = 200
+  query = {username = ":username"}
