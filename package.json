@@ -1,0 +1,33 @@
+{
+  "name": "intagram2json",
+  "version": "1.0.0",
+  "description": "Fetch Instagram page like JSON",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "instagram",
+    "likes",
+    "photos",
+    "fakeAPI"
+  ],
+  "author": "Tusko Trush",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.15",
+    "memory-cache": "^0.2.0",
+    "prettier": "^1.18.2",
+    "puppeteer": "^1.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.1"
+  }
+}
