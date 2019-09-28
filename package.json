@@ -15,6 +15,10 @@
     "photos",
     "fakeAPI"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tusko/nodejs-insta-json.git"
+  },
   "author": "Tusko Trush",
   "license": "ISC",
   "dependencies": {
