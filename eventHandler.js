@@ -7,7 +7,7 @@ exports.send = (err = false, msg = "ok", obj = {}) => ({
   message: msg
 });
 
-exports.processing = (req, res) => {
+exports.processing = async (req, res) => {
   if (!req.query.username) {
     res.json(this.send(true, "Username is missing"));
   } else {
@@ -21,19 +21,21 @@ exports.processing = (req, res) => {
         this.send(false, `Success ${cachedBody.length}`, cachedBody)
       );
 
-    const instaJSON = insta.fetch(req.query);
-    instaJSON
-      .then(json => {
-        mcache.put(cacheKey, json, cacheTime * 1000);
+    const instaJSON = await insta.fetch(req.query);
+    instaJSON.then(json => {
+      if (json.error) {
+        res.json(this.send(true, json.error));
+        res.end();
+      }
+      mcache.put(cacheKey, json, cacheTime * 1000);
+      res.json(this.send(false, `Success ${json.length}`, json));
+      res.end();
+    });
 
-        if (json.error) {
-          res.json(this.send(true, json.error));
-        }
-        res.json(this.send(false, `Success ${json.length}`, json));
-      })
-      .catch(err => {
-        res.json(this.send(true, `Error: ${err}`));
-      });
+    instaJSON.catch(err => {
+      res.json(this.send(true, err));
+      res.end();
+    });
   }
   return false;
 };

@@ -1,9 +1,6 @@
 const puppeteer = require("puppeteer");
 
 exports.fetch = async settings => {
-  const timeLabel = "Browser: ";
-  console.time(timeLabel);
-
   const browser = await puppeteer.launch({
     headless: true,
     args: [
@@ -13,7 +10,8 @@ exports.fetch = async settings => {
       "--enable-font-antialiasing",
       "--disable-setuid-sandbox",
       "--proxy-server='direct://'",
-      "--proxy-bypass-list=*"
+      "--proxy-bypass-list=*",
+      "--enable-features=NetworkService"
     ],
     sloMo: 0
   });
@@ -50,8 +48,20 @@ exports.fetch = async settings => {
       { waitUntil: "networkidle2" }
     );
 
+    await page.on("requestfailed", request => ({
+      error: request.failure().errorText
+    }));
+
+    await page.on("onerror", err => ({
+      error: err
+    }));
+
     if (fetchUrl.headers().status === "404") {
       return { error: "Page not found" };
+    }
+
+    if (fetchUrl._url.contains("login")) {
+      return { error: "Redirected to login page" };
     }
 
     const _sharedData = await page.evaluate("_sharedData");
@@ -59,7 +69,7 @@ exports.fetch = async settings => {
       _sharedData.entry_data.ProfilePage[0].graphql.user.is_private === true
     ) {
       return {
-        error: `The profile '${settings.username}' is private. Can't fetch images`
+        error: `The profile '${settings.username}' is private`
       };
     }
 
@@ -85,13 +95,12 @@ exports.fetch = async settings => {
 
       return await imageList;
     } catch (err) {
-      console.error(err);
+      return { error: err };
     }
   } catch (err) {
-    return await err;
+    return { error: err };
   } finally {
-    console.timeEnd(timeLabel);
     await browser.close();
   }
-  return { error: "Browser error" };
+  // return { error: "Browser error" };
 };
