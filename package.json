@@ -4,6 +4,8 @@
   "description": "Fetch Instagram page like JSON",
   "main": "index.js",
   "scripts": {
+    "build": "netlify-lambda build express",
+    "dev": "nodemon index.js",
     "postinstall": "netlify-lambda install"
   },
   "keywords": [
