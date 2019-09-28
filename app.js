@@ -1,25 +1,9 @@
 const puppeteer = require("puppeteer");
 
-async function autoScroll(page) {
-  await page.evaluate(async () => {
-    await new Promise(resolve => {
-      let totalHeight = 0;
-      const distance = 100;
-      const timer = setInterval(() => {
-        const { scrollHeight } = document.body;
-        window.scrollBy(0, distance);
-        totalHeight += distance;
-
-        if (totalHeight >= scrollHeight) {
-          clearInterval(timer);
-          resolve();
-        }
-      }, 100);
-    });
-  });
-}
-
 exports.fetch = async settings => {
+  const timeLabel = "Browser: ";
+  console.time(timeLabel);
+
   const browser = await puppeteer.launch({
     headless: true,
     args: [
@@ -36,20 +20,30 @@ exports.fetch = async settings => {
   const page = await browser.newPage();
 
   try {
-    const timeLabel = "Browser: ";
-    console.time(timeLabel);
-
     await page.emulate({
       name: "MacBook Pro 2018 1440x900",
       userAgent:
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
       viewport: {
         deviceScaleFactor: 2,
-        width: 1440,
-        height: 900
+        width: 1600,
+        height: 1080
       }
     });
-    // await page.setRequestInterception(true);
+    await page.setRequestInterception(true);
+
+    await page.on("request", source => {
+      const ends2Ignore = [
+        "manifest.json",
+        ".png",
+        ".ico",
+        "/bz",
+        "/falco",
+        "/logging_client_events"
+      ];
+      if (ends2Ignore.some(e => source.url().endsWith(e))) source.abort();
+      else source.continue();
+    });
 
     const fetchUrl = await page.goto(
       `https://instagram.com/${settings.username}`,
@@ -59,15 +53,6 @@ exports.fetch = async settings => {
     if (fetchUrl.headers().status === "404") {
       return { error: "Page not found" };
     }
-
-    // await page.on("request", req => {
-    //   if (
-    //     req.resourceType() === "stylesheet" ||
-    //     req.resourceType() === "font"
-    //   ) {
-    //     req.abort();
-    //   }
-    // });
 
     const _sharedData = await page.evaluate("_sharedData");
     if (
@@ -80,14 +65,13 @@ exports.fetch = async settings => {
 
     try {
       await page.waitFor(500);
-      await autoScroll(page);
 
       const imageList = await page.evaluate(() => {
         const arr = [];
-        // page.waitFor(500);
-        const images = [...document.getElementsByTagName("img")];
-        images.forEach((img, i) => {
-          if (i !== 0 && img && img.naturalWidth >= 250)
+        const wrap = document.getElementsByTagName("article");
+        const images = [...wrap[0].getElementsByTagName("img")];
+        images.forEach(img => {
+          if (img && img.naturalWidth >= 250)
             arr.push({
               src: img.src,
               sizes: {
@@ -99,7 +83,6 @@ exports.fetch = async settings => {
         return arr;
       });
 
-      console.timeEnd(timeLabel);
       return await imageList;
     } catch (err) {
       console.error(err);
@@ -107,6 +90,8 @@ exports.fetch = async settings => {
   } catch (err) {
     return await err;
   } finally {
+    console.timeEnd(timeLabel);
     await browser.close();
   }
+  return { error: "Browser error" };
 };

@@ -12,21 +12,19 @@ exports.processing = (req, res) => {
     res.json(this.send(true, "Username is missing"));
   } else {
     const cacheKey = `__transient__${req.query.username}`;
+    const cacheTime = req.query.cache || 3600;
+    const cachedBody = mcache.get(cacheKey);
 
-    if (req.query.nocache !== 1) {
-      const cachedBody = mcache.get(cacheKey);
-
-      //  return cached data
-      if (cachedBody)
-        return res.json(
-          this.send(false, `Success ${cachedBody.length}`, cachedBody)
-        );
-    }
+    //  return cached data
+    if (cachedBody && cacheTime !== "0")
+      return res.json(
+        this.send(false, `Success ${cachedBody.length}`, cachedBody)
+      );
 
     const instaJSON = insta.fetch(req.query);
     instaJSON
       .then(json => {
-        if (req.query.nocache !== 1) mcache.put(cacheKey, json, 3600000);
+        mcache.put(cacheKey, json, cacheTime * 1000);
 
         if (json.error) {
           res.json(this.send(true, json.error));

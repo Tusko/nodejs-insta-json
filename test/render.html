@@ -4,13 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
+    <title>Render test</title>
+    <style>
+      #grid {
+        margin: 0 auto;
+        height: 100vh;
+        width: 1080px;
+      }
+      #grid:empty {
+        background: url(https://arsmoon.com/brand-wp-admin/spin.php?color=ff8a00)
+          50% no-repeat;
+      }
+    </style>
   </head>
   <body>
     <h1 style="text-align: center">Images preview</h1>
     <div id="grid"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-json/2.6.0/jquery.json.min.js"></script>
-    <script src="index.js"></script>
+    <script src="./index.js"></script>
   </body>
 </html>
