@@ -4,8 +4,8 @@
   "description": "Fetch Instagram page like JSON",
   "main": "index.js",
   "scripts": {
-    "build": "netlify-lambda serve /",
-    "dev": "nodemon index.js",
+    "build": "netlify-lambda build express",
+    "dev": "nodemon server-local.js",
     "postinstall": "netlify-lambda install"
   },
   "keywords": [
@@ -22,16 +22,17 @@
   "author": "Tusko Trush",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "lodash": "^4.17.15",
     "memory-cache": "^0.2.0",
     "netlify-lambda": "^1.6.3",
-    "prettier": "^1.18.2",
     "puppeteer": "^1.20.0",
     "serverless-http": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^6.4.0",
+    "prettier": "^1.18.2",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-import": "^2.18.2",
