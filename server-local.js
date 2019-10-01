@@ -1,10 +1,10 @@
 const app = require("./express/server");
 
-// process.on("unhandledRejection", (reason, promise) => {
-//   console.error("Unhandled Rejection at:", reason.stack || reason);
-//   // Recommended: send the information to sentry.io
-//   // or whatever crash reporting service you use
-// });
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", reason.stack || reason);
+  // Recommended: send the information to sentry.io
+  // or whatever crash reporting service you use
+});
 
 app
   .set("port", process.env.PORT || 8182)

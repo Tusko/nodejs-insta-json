@@ -53,20 +53,18 @@ exports.fetch = async settings => {
         { waitUntil: "networkidle2" }
       );
 
-      await page.on("requestfailed", request => {
-        reject(Error(request.failure().errorText));
-      });
+      await page.on("requestfailed", request =>
+        reject(Error(request.failure().errorText))
+      );
 
-      await page.on("error", err => {
-        reject(Error(err));
-      });
+      await page.on("error", err => reject(Error(err)));
 
       if (fetchUrl.headers().status === "404") {
-        reject(Error("Page not found"));
+        await reject(Error("Page not found"));
       }
 
       if (fetchUrl._url.includes("login")) {
-        reject(Error("Redirected to login page"));
+        await reject(Error("Redirected to login page"));
       }
 
       const _sharedData = await page.evaluate("_sharedData");
