@@ -4,9 +4,8 @@
   "description": "Fetch Instagram page like JSON",
   "main": "index.js",
   "scripts": {
-    "build": "NODE_ENV=deploy netlify-lambda build express",
-    "dev": "NODE_ENV=development nodemon server-local.js",
-    "postinstall": "netlify-lambda install"
+    "start": "NODE_ENV=deploy node server-local.js",
+    "dev": "NODE_ENV=development nodemon server-local.js"
   },
   "keywords": [
     "nodejs",
@@ -27,7 +26,6 @@
     "express": "^4.17.1",
     "lodash": "^4.17.15",
     "memory-cache": "^0.2.0",
-    "netlify-lambda": "^1.6.3",
     "puppeteer": "^1.20.0",
     "serverless-http": "^2.3.0"
   },

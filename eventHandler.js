@@ -31,5 +31,5 @@ exports.processing = async (req, res) => {
       res.json(this.send(true, `${err.name} : ${err.message}`));
     });
 
-  // return res.end();
+  res.end();
 };

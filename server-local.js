@@ -8,5 +8,4 @@ app
       return console.log("Somethig went wrong", err);
     }
     console.log(`Server is listening on http://localhost:${app.get("port")} `);
-    return false;
   });
