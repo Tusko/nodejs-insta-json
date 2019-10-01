@@ -1,27 +1,23 @@
 const express = require("express");
 const serverless = require("serverless-http");
-const bodyParser = require("body-parser");
 const path = require("path");
 
 const eventHandler = require("../eventHandler");
 
 const app = express();
-const router = express.Router();
 
-app.use(express.static(path.join(__dirname, `/preview`)));
-app.engine("html", require("ejs").renderFile);
+app
+  .use(express.static(path.join(__dirname, `/preview`)))
 
-router.get("/", (req, res, next) => {
-  eventHandler.processing(req, res);
-  next();
-});
+  .engine("html", require("ejs").renderFile)
 
-router.get("/preview", (req, res, next) => {
-  res.render(path.join(__dirname, `/preview/render.html`));
-  next();
-});
+  .get("/", async (req, res) => {
+    await eventHandler.processing(req, res);
+  })
 
-app.use(bodyParser.json());
+  .get("/preview", (req, res) => {
+    res.render(path.join(__dirname, `/preview/render.html`));
+  });
 
 module.exports = app;
 module.exports.handler = serverless(app);
